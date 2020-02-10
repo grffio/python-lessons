@@ -6,13 +6,13 @@ vacancy_name = 'devops'
 # Api documentation: https://github.com/hhru/api/blob/master/docs/vacancies.md#search
 base_api_url = 'https://api.hh.ru/'
 base_hh_url = 'https://hh.ru/employer/'
-vacancies_query = 'vacancies/?area=1&period=30&per_page=100&text={0}'.format(vacancy_name)
+vacancies_query = f'vacancies/?area=1&period=30&per_page=100&text={vacancy_name}'
 employers_query = 'employers/'
 
 keywords = ['inc']
 
 def do_request(url):
-    """ Return response from the provided URL """
+    """Return response from the provided URL."""
     r = requests.get(url)
 
     # Warn and exit if 'Status Code' not 'OK 200'
@@ -23,7 +23,7 @@ def do_request(url):
     return r
 
 def get_vacancies(url):
-    """ Get all vacancies data from the provided URL """
+    """Get all vacancies data from the provided URL."""
     resp = do_request(url)
 
     vacancies = []
@@ -46,7 +46,7 @@ def get_vacancies(url):
     return vacancies, stat
 
 def get_employers_ids(vacancies, stat):
-    """ Go through all the vacancies and take the ID of the employer """
+    """Go through all the vacancies and take the ID of the employer."""
     employers_ids = []
 
     # We need to go through the array many times since its structure is 'vacancies[page]items[vacancy]'
@@ -56,11 +56,11 @@ def get_employers_ids(vacancies, stat):
             # continue work and skip employers without ID
             try:
                 employer_id = item['employer']['id']
+                
+                if employer_id not in employers_ids:
+                    employers_ids.append(employer_id)
             except KeyError:
-                pass
-
-            if employer_id not in employers_ids:
-                employers_ids.append(employer_id)
+                continue
 
     # Set new statistics value of employers
     stat.set_employers(len(employers_ids))
@@ -68,7 +68,7 @@ def get_employers_ids(vacancies, stat):
     return employers_ids
 
 def sort_employer(url, employer, keywords, stat):
-    """ Fetch description about the employer and parse it by keywords """
+    """Fetch description about the employer and parse it by keywords."""
     resp = do_request(url+employer)
 
     # Increase the processed value of the statistic
@@ -78,7 +78,7 @@ def sort_employer(url, employer, keywords, stat):
     return parse_employer(description, keywords, stat)
 
 def parse_employer(description, keywords, stat):
-    """ Check for keywords in the employer's description """
+    """Check for keywords in the employer's description."""
     for kw in keywords:
         # Go to the next one if the given employer has no description
         try:
@@ -91,6 +91,7 @@ def parse_employer(description, keywords, stat):
             return True
         else:
             stat.up_unsuitable()
+            return False
 
 vacancies, stat = get_vacancies(base_api_url+vacancies_query)
 employers_ids = get_employers_ids(vacancies, stat)
@@ -98,7 +99,7 @@ employers_ids = get_employers_ids(vacancies, stat)
 # Display links to those employers whose keywords are in the description
 for employer_id in employers_ids:
     status = sort_employer(base_api_url+employers_query, employer_id, keywords, stat)
-    if status is True:
+    if status:
         print(base_hh_url + employer_id)
 
 stat.show_stat()
