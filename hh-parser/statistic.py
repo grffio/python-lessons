@@ -1,7 +1,11 @@
-class Statistic():
-    """Class to create statistics."""
+class Statistic:
+    """
+    Class to create statistics.
+    """
     def __init__(self, vacancies):
-        """Initiate counters for displaying statistics."""
+        """
+        Initiate counters for displaying statistics.
+        """
         self.vacancies = vacancies
         self.employers = 0
         self.processed = 0
@@ -9,31 +13,43 @@ class Statistic():
         self.unsuitable = 0
 
     def show_stat(self):
-        """Print all statistics."""
+        """
+        Print all statistics.
+        """
         print('')
         println('Total vacancies:', self.vacancies)
         println('Total employers:', self.employers)
         println('Processed      :', self.processed)
         println('Suitable       :', self.suitable)
         println('Unsuitable     :', self.unsuitable)
-        print('')
 
     def set_employers(self, employers):
-        """Set employers counter."""
+        """
+        Set employers counter.
+        """
         self.employers = employers
 
     def up_processed(self):
-        """Increase processed counter."""
+        """
+        Increase processed counter.
+        """
         self.processed += 1
     
     def up_suitable(self):
-        """Increase suitable counter."""
+        """
+        Increase suitable counter.
+        """
         self.suitable += 1
 
     def up_unsuitable(self):
-        """Increase unsuitable counter."""
+        """
+        Increase unsuitable counter.
+        """
         self.unsuitable += 1
 
+
 def println(string, count):
-    """Print readable line."""
+    """
+    Print readable line.
+    """
     print(string + ' ' + str(count))
