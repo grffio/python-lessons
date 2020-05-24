@@ -8,7 +8,10 @@ def max_num_parser(val: str):
         return
 
     num_arr = val.split(";")
+    # check that all the elements are numbers.
     for item in num_arr:
+        # bring the value to the format without '-' for negative numbers and without '.' for float
+        # for check by 'isdigit()' method.
         num_format = item.replace('.', '').replace('-', '')
         if not num_format.isdigit():
             print(f"invalid item type: '{item}', expected number in 'float' or 'int'")
